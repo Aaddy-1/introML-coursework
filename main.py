@@ -202,28 +202,27 @@ def decision_tree_learning(dataset, depth=0):
 # *Taken Inspiration from the Reingold-Tilford Algorithm*
 
 
-# For visualisation, we first traverse through all the leafs and assign it a x-coordinate.
-# Next, we traverse again and assign coordinates for the parent using the coordinates of the leaf.
-# Finally, we draw the tree using a top down approach once we have all the required coordinates.
+import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
+# For visualisation, we first traverse through all the leafs and assign it a x-coordinate. Next, we traverse again and assign coordinates for the parent using the coordinates of the leaf. Finally, we draw the tree using a top down approach once we have all the required coordinates.
 
 # Assigning x-coordinates for all the leafs, we traverse the tree using post order tree traversal to assign all coordinates
 def assign_leaf_x_coords(node, current_count):
-    # Recursing left
+    #Recursing left
     if node.left:
         current_count = assign_leaf_x_coords(node.left, current_count)
-    # Recursing right
+    #Recursing right
     if node.right:
         current_count = assign_leaf_x_coords(node.right, current_count)
-    # Check if leaf and assign coordinate
+    #Check if leaf and assign coordinate
     if node.is_leaf:
-        # This is a leaf - assign it the next x-coordinate using the counter
+        # This is a leaf so we assign it the next x-coordinate using the counter
         node.x = current_count
-        current_count = current_count + 1
-
+        current_count = current_count+1
+    
     return current_count
-
-
+    
 # Next for each parent node we assign x-coordinates by calculating midpoint, used post order traversal again.
 def assign_parent_x_coords(node):
     if node.is_leaf:
@@ -232,13 +231,14 @@ def assign_parent_x_coords(node):
     else:
         left_min, left_max = 0.0, 0.0
         right_min, right_max = 0.0, 0.0
-
+        
         if node.left:
             left_min, left_max = assign_parent_x_coords(node.left)
-
+        
         if node.right:
             right_min, right_max = assign_parent_x_coords(node.right)
-
+        
+        
         if node.left and node.right:
             # Center between the two children
             node.x = (node.left.x + node.right.x) / 2
@@ -248,7 +248,7 @@ def assign_parent_x_coords(node):
         elif node.right:
             # Align with the single right child
             node.x = node.right.x
-
+        
         # Return the min and max x-span of the subtree
         if node.left and node.right:
             return left_min, right_max
@@ -259,85 +259,66 @@ def assign_parent_x_coords(node):
         else:
             return node.x, node.x
 
-
 def draw_recursive(ax, node, depth, max_depth):
     # We print the nodes using a top down approach using a pre order traversal
     # Calculate y-coordinate from depth (root is at top)
     y = max_depth - depth
-
+    
     # Box formatting
-    box_style = dict(boxstyle="round,pad=0.5", fc="w", lw=1)
-    fontsize = 10
+    box_style = dict(boxstyle='round,pad=0.5', fc='w', lw=2)
+    fontsize = 16
 
     if node.is_leaf:
-        node_text = f"leaf:{node.prediction:.1f}"
-        box_style["ec"] = "g"  # Green box for leaves
-        ax.text(
-            node.x,
-            y,
-            node_text,
-            ha="center",
-            va="center",
-            bbox=box_style,
-            color="g",
-            fontsize=fontsize,
-        )
+        node_text = f"{node.prediction:.1f}" 
+        box_style['ec'] = 'g' # Green box for leaves
+        ax.text(node.x, y, node_text, ha='center', va='center', bbox=box_style, color='g', fontsize=fontsize, fontweight='bold')
     else:
         node_text = f"[X{node.attribute_index} < {node.split_value:.1f}]"
-        box_style["ec"] = "b"  # Blue box for decisions
-        ax.text(
-            node.x,
-            y,
-            node_text,
-            ha="center",
-            va="center",
-            bbox=box_style,
-            color="b",
-            fontsize=fontsize,
-        )
-
+        box_style['ec'] = 'b' # Blue box for decisions
+        ax.text(node.x, y, node_text, ha='center', va='center', bbox=box_style, color='b', fontsize=fontsize, fontweight='bold')
+        
         # Draw branches to children
         y_child = y - 1
         if node.left:
-            ax.plot([node.x, node.left.x], [y, y_child], "k-")  # Black line
+            ax.plot([node.x, node.left.x], [y, y_child], 'k-') # Black line
             draw_recursive(ax, node.left, depth + 1, max_depth)
-
+        
         if node.right:
-            ax.plot([node.x, node.right.x], [y, y_child], "k-")  # Black line
+            ax.plot([node.x, node.right.x], [y, y_child], 'k-') # Black line
             draw_recursive(ax, node.right, depth + 1, max_depth)
 
-
-def visualize_tree(tree, title="Decision Tree"):
+def visualize_tree(tree, title="Decision Tree Visualisation"):
 
     # Extracting root and depth
     root_node = tree[0]
     max_depth = tree[1]
-
+    
     # Initialising the variable that will keep track of the number of leaves
     current_count = 0
     # Counting total number of leaves
-    total_leaves = assign_leaf_x_coords(root_node, current_count)
-    assign_parent_x_coords(root_node)
-
-    # Setting up the plot
-    fig_width = max(15, total_leaves * 0.7)
-    fig_height = max(8, max_depth * 0.9)
-
+    total_leaves = assign_leaf_x_coords(root_node,current_count) 
+    assign_parent_x_coords(root_node) 
+    
+    # Setting up the plot 
+    fig_width = max(15, total_leaves * 0.9)
+    fig_height = max(8, max_depth * 1.6)
+    
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
     fig.suptitle(title, fontsize=16)
-    ax.axis("off")
+    ax.axis('off')
+    
     ax.set_xlim(-1, total_leaves)
     ax.set_ylim(-1, max_depth + 1)
 
+    # Adding Legend
+    leaf_patch = Patch(color='g', label='Leaf Node')
+    inner_patch = Patch(color='b', label='Inner Node')
+    ax.legend(handles=[leaf_patch, inner_patch], loc='upper left', fontsize=30)
     draw_recursive(ax, root_node, 0, max_depth)
-
+    
     # Display the plot
     plt.tight_layout()
     plt.show()
-
-
-clean_tree = decision_tree_learning(clean_dataset)
-visualize_tree(clean_tree)
 
 
 def kfold_datasets_generator(dataset, number_of_folds=10):
