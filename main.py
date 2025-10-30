@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 # Step 1: Loading Data
 
@@ -202,8 +203,6 @@ def decision_tree_learning(dataset, depth=0):
 # *Taken Inspiration from the Reingold-Tilford Algorithm*
 
 
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
 
 # For visualisation, we first traverse through all the leafs and assign it a x-coordinate. Next, we traverse again and assign coordinates for the parent using the coordinates of the leaf. Finally, we draw the tree using a top down approach once we have all the required coordinates.
 
