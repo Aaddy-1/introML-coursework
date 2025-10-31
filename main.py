@@ -336,7 +336,22 @@ def visualize_tree(tree, title="Decision Tree Visualisation"):
 
     # Display the plot
     plt.tight_layout()
-    plt.show()
+
+    plots_dir = "plots"
+    safe_title = re.sub(r'[^a-zA-Z0-9_]', '', title.replace(' ', '_')).lower()
+    if not safe_title:
+        safe_title = "decision_tree"
+    filename = f"{safe_title}.png"
+    os.makedirs(plots_dir, exist_ok=True)
+    save_path = os.path.join(plots_dir, filename)
+    
+    try:
+        fig.savefig(save_path, bbox_inches='tight', dpi=300)
+        print(f"Plot saved successfully to: {save_path}")
+    except Exception as e:
+        print(f"Error saving plot: {e}")
+        
+    # plt.show()
 
 
 # Visualizing a tree trained on the clean dataset
