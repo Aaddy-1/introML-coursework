@@ -8,6 +8,8 @@ This project is built using standard Python libraries, with a strict limitation 
 
 You can use either the script (`main.py`) or the notebook (`main.ipynb`) to evaluate the project
 
+If you choose to use `main.py`, the plot containing the visualization of the tree will be saved as a file `plot.png` in the root folder.
+
 ### **1. Setup the Data**
 1) The code is assuming that the data is being stored in a folder called 'Dataset', with filenames 'clean_dataset.txt', 'noisy_dataset.txt'.
 2) In order to test the code using your own data, please change the lines 
