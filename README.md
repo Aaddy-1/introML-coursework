@@ -33,7 +33,7 @@ You can use either the script (`main.py`) or the notebook (`main.ipynb`) to eval
    prune remains `False` by default in the function.
    
 
-The code is confirmed to run on the DoC lab machines.
+The code is confirmed to run on the DoC lab machines using the `intro2ml` virtual environment.
 
 ### **2. Dependencies**
 
